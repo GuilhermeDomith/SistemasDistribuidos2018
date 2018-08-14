@@ -11,12 +11,14 @@ while True:
 			break
 
 		socket.send(comando.encode('utf-8'))
-		resposta = socket.recv(1024)
-		print(resposta.decode('utf-8'))
 
-	except KeyboardInterrupt:
+		resposta = socket.recv(4096)
+		print(resposta.decode('utf-8'))
+	except KeyboardInterrupt as e:
+		print(e)
 		break
-	except:
+	except Exception as e:
+		print(e)
 		break
 
 print('Conexão encerrada')

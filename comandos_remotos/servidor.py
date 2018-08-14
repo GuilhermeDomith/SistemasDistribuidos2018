@@ -23,18 +23,25 @@ def iniciar():
 def atenderCliente(connection):
 
     while True:
-        comando = connection.recv(1024).decode('utf-8')
-
-        if comando.lower() == 'exit':
-            break
-
         try:
-            resultado_cmd = subprocess.check_output(comando.split(' '),
+            comando = connection.recv(1024).decode('utf-8')
+
+            if comando.lower() == 'exit':
+                break
+    
+            resultado_cmd = subprocess.check_output(comando,
                                                     universal_newlines=True,
+                                                    shell=True,
                                                     stderr=subprocess.STDOUT)
-        except FileNotFoundError:
+            if not resultado_cmd:
+                resultado_cmd = 'O comando não pôde ser executado.'
+
+            print("Resultado -> "+resultado_cmd)
+        except (FileNotFoundError, subprocess.CalledProcessError) as e:
+            print(e)
             resultado_cmd = 'Comando não encontrado.'
-        except:
+        except Exception as e:
+            print(e)
             break
 
         connection.send(resultado_cmd.encode('utf-8'))
