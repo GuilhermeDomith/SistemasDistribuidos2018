@@ -1,8 +1,8 @@
 import socket as s
-import subprocess as subp
+from terminal import executarComando
 
 
-def iniciar():
+def iniciarServidor():
     socket = s.socket(s.AF_INET, s.SOCK_STREAM)
     socket.bind(('', 25000))
     socket.listen(1)
@@ -12,6 +12,8 @@ def iniciar():
             print('Esperando conexão...')
             connection, addr = socket.accept()
             print('Conexão aceita.')
+            
+            connection.settimeout(10)
             atenderCliente(connection)
         except KeyboardInterrupt:
             break
@@ -28,18 +30,7 @@ def atenderCliente(connection):
             if comando.lower() == 'exit':
                 break
 
-            try:
-
-                resultado_cmd = subp.check_output(comando,
-                                                  universal_newlines=True,
-                                                  shell=True,
-                                                  stderr=subp.STDOUT)
-                if not resultado_cmd:
-                    resultado_cmd = 'O comando não pôde ser executado.'
-
-            except (FileNotFoundError, subp.CalledProcessError):
-                resultado_cmd = 'Comando não encontrado.'
-
+            resultado_cmd = executarComando(comando) + "\nserver"
             connection.send(resultado_cmd.encode('utf-8'))
         except:
             break
@@ -49,4 +40,4 @@ def atenderCliente(connection):
 
 
 if __name__ == '__main__':
-    iniciar()
+    iniciarServidor()
