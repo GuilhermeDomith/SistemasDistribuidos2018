@@ -3,8 +3,8 @@
 Para iniciar a aplicação os arquivos *servidor.py* e o *cliente.py* devem ser executados. 
 
 <pre>
-python servidor.py
-python cliente.py
+$ python servidor.py
+$ python cliente.py
 </pre>
 
 O servidor deve ser executado primeiro para que o cliente conecte com o servidor ao ser executado.
