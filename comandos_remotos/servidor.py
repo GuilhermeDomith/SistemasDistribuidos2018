@@ -13,9 +13,10 @@ def iniciarServidor():
             connection, addr = socket.accept()
             print('Conexão aceita.')
 
-            connection.settimeout(10)
+            connection.settimeout(20)
             atenderCliente(connection)
         except KeyboardInterrupt:
+            print("Programa interrompido.")
             break
 
     print('Servidor encerrado.')
@@ -30,11 +31,10 @@ def atenderCliente(connection):
             if comando.lower() == 'exit':
                 break
 
-            resultado_cmd = executarComando(comando) + '\n server'
+            resultado_cmd = executarComando(comando) + '\n\nserver'
             tamanhoResposta = str(len(resultado_cmd)).zfill(10)
             resultado_cmd = tamanhoResposta + resultado_cmd
 
-            print(resultado_cmd)
             connection.send(resultado_cmd.encode('utf-8'))
         except Exception as e:
             print(e)

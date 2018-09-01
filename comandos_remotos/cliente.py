@@ -1,13 +1,14 @@
 from terminal import executarComando
 import socket as s
-import servidor
 
 sem_conexao = True
 resposta = ''
 
 def iniciarCliente():
+	global sem_conexao
+
 	socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-	socket.settimeout(2)
+	socket.settimeout(20)
 
 	while True:
 		try:
@@ -22,9 +23,9 @@ def iniciarCliente():
 
 			print(resposta)
 		except KeyboardInterrupt:
+			print("Programa interrompido.")
 			break
-		except Exception as e:
-			print(e)
+		except:
 			sem_conexao = True
 			resposta = executarComando(comando)
 			print(resposta)
@@ -36,7 +37,7 @@ def iniciarCliente():
 def ler_comando():
 
 	while True:
-		comando = input('comando: ')
+		comando = input('\ncomando: ')
 
 		if not len(comando):
 			continue
@@ -50,6 +51,7 @@ def conectar_com_servidor(socket):
 	global sem_conexao
 
 	if sem_conexao:
+		print("Sem conexão")
 		socket.connect(('127.0.0.1', 25900))
 		sem_conexao = False
 
@@ -60,14 +62,11 @@ def receber_mensagem(socket):
 
 	mensagem = ''
 	quantRecebido = 0
-	while True:
+	while quantRecebido < tamanho:
 		recv = socket.recv(1024).decode('utf-8')
 
 		quantRecebido += 1024
 		mensagem += recv
-
-		if quantRecebido >= tamanho:
-			break
 
 	return mensagem
 

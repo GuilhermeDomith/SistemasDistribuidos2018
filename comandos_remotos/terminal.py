@@ -5,9 +5,8 @@ def executarComando(comando):
 
     try:
         resultado_cmd = getoutput(comando)
-    except (FileNotFoundError, CalledProcessError) as e:
-        resultado_cmd = 'Comando não encontrado.' + str(e)
     except Exception as e:
+        print("Erro ao executar comando: " + str(e))
         resultado_cmd = str(e)
 
     return resultado_cmd
