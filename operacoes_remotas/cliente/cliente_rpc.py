@@ -13,8 +13,7 @@ def enviar_operacao(operacao):
 
         print(resposta)
     except KeyboardInterrupt:
-        print("Programa interrompido.")
+        pass
 
     socket.close()
-    print('Conexão encerrada')
     return resposta

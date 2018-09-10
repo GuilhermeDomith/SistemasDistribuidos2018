@@ -1,9 +1,10 @@
 import socket as s
+from modulo import *
 import json
 
 def iniciarServidor():
     socket = s.socket(s.AF_INET, s.SOCK_STREAM)
-    socket.bind(('', 25900))
+    socket.bind(('', 25600))
     socket.listen(1)
 
     while True:
@@ -25,9 +26,10 @@ def iniciarServidor():
 def atenderCliente(connection):
     try:
         mensagem = connection.recv(1024).decode('utf-8')
-        operacao = json.loads(mensagem)
+        mensagem = json.loads(mensagem)
 
-        mensagem = ops[operacao['op']](operacao['n1'], operacao['n2'])
+        operacao = mensagem['op']
+        mensagem = operacoes[operacao](mensagem['n1'], mensagem['n2'])
 
         connection.send(str(mensagem).encode('utf-8'))
         print(operacao)
@@ -35,26 +37,6 @@ def atenderCliente(connection):
         print(e)
 
     connection.close()
-
-def soma(a, b):
-    return a + b
-
-def subtracao(a, b):
-    return a-b
-
-def divisao(a, b):
-    return a/b
-
-def multiplicacao(a, b):
-    return a*b
-
-ops = {
-    '+': soma,
-    '-': subtracao,
-    '/': divisao,
-    '*': multiplicacao
-}
-
 
 
 if __name__ == '__main__':
