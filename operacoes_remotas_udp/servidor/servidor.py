@@ -2,9 +2,10 @@ import socket as s
 import json
 from modulo import *
 import threading as thr
+import hashlib
 
 UDP_PORT = 5005
-TCP_PORT = 5006
+TCP_PORT = 5004
 
 def main():
     thr.Thread(target=check_connection_TCP, args=(), name='Conexão Server TCP', daemon=True).start()
@@ -19,14 +20,19 @@ def servidor_RCP():
 
     while True:
         data, addr = socket.recvfrom(1024)
-        print('operacao:  ', addr)
         data = json.loads(data.decode('utf-8'))
 
         resposta = operacoes[data['op']](data['n1'], data['n2'])
-        print('resposta: ', resposta)
-        socket.sendto(str(resposta).encode('utf-8'), addr)
+        print('mensagem: ', data)
+        resposta = criar_hash(str(resposta)) + '#' + str(resposta)
+        socket.sendto(resposta.encode('utf-8'), addr)
 
     socket.close()
+
+def criar_hash(mensagem):
+    md5 = hashlib.md5()
+    md5.update(mensagem.encode('utf-8'))
+    return md5.hexdigest()
 
 
 def check_connection_TCP():
